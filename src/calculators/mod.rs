@@ -81,6 +81,10 @@ impl WearRatio {
     }
 
     pub fn get_ratio(&self) -> f64 {
-        self.car_age as f64 * self.wear_ratio
+        if self.car_age > 0 {
+            self.car_age as f64 * self.wear_ratio
+        } else {
+            1.0
+        }
     }
 }
