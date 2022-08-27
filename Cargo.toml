@@ -1,5 +1,5 @@
 [package]
-name = "diselgate_service"
+name = "dieselgate_service"
 version = "0.1.0"
 edition = "2021"
 authors = ["Krzysztof Gał <dev@krzysztofgal.pl>"]
