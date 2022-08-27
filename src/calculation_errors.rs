@@ -2,6 +2,8 @@
 pub enum DieselUsageCalculationError {
     #[error("Invalid Calculation Parameters: {0}")]
     InvalidParams(String),
+    #[error("Unable to perform calculation for given parameters")]
+    CalculationFailed,
     #[error("Internal Error, Invalid configuration")]
     Unimplemented,
 }

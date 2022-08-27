@@ -9,6 +9,7 @@ use bigdecimal::BigDecimal;
 mod json_response;
 mod calculation_traits;
 mod calculation_errors;
+mod calculators;
 
 const SERVER_LISTEN_ADDR: &str = "0.0.0.0:80";
 

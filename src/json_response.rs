@@ -82,6 +82,7 @@ impl From<DieselUsageCalculationError> for JsonResponse {
 
         let status_code = match err {
             InvalidParams(..) => StatusCode::BAD_REQUEST,
+            CalculationFailed => StatusCode::BAD_REQUEST,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
