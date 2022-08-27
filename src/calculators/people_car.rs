@@ -1,6 +1,6 @@
 use super::{DieselUsageCalculator, DieselUsageCalculationError};
 use super::{UnitInjectorFailProbabilityCalculator, UnitInjectorFailCalculationError};
-use super::{DieselConsumption, WearRatio};
+use super::{DieselConsumption, WearRatio, UnitInjectorRandomCalc};
 
 use bigdecimal::BigDecimal;
 
@@ -25,7 +25,7 @@ impl DieselUsageCalculator for PasWagonC6Calculator {
 
 impl UnitInjectorFailProbabilityCalculator for PasWagonC6Calculator {
     fn calc_failure_probability(&self, vin: &str) -> Result<BigDecimal, UnitInjectorFailCalculationError> {
-        todo!()
+        UnitInjectorRandomCalc.calc_failure_probability(vin)
     }
 }
 
@@ -33,7 +33,6 @@ impl UnitInjectorFailProbabilityCalculator for PasWagonC6Calculator {
 mod tests {
     use bigdecimal::BigDecimal;
     use chrono::Datelike;
-    use crate::calculation_traits::DieselUsageCalculator;
     use super::PasWagonC6Calculator;
 
     #[test]
@@ -45,9 +44,21 @@ mod tests {
         let current_year = chrono::Local::now().year() as usize;
 
         let consumption = car.calc_consumption_for_distance(fuel_usage, 100, current_year).unwrap();
+        dbg!(&consumption);
         assert_eq!(BigDecimal::from(5), consumption);
 
         let consumption = car.calc_consumption_for_distance(fuel_usage, 100, current_year - 1).unwrap();
+        dbg!(&consumption);
         assert_eq!(BigDecimal::from(10), consumption);
+    }
+
+    #[test]
+    fn test_injection_failure() {
+        use super::UnitInjectorFailProbabilityCalculator;
+
+        let car = PasWagonC6Calculator::new(2.0);
+        let fail_chance = car.calc_failure_probability("_unused");
+        dbg!(&fail_chance);
+        assert!(fail_chance.is_ok());
     }
 }

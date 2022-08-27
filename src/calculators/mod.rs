@@ -88,3 +88,24 @@ impl WearRatio {
         }
     }
 }
+
+
+pub struct UnitInjectorRandomCalc;
+
+impl UnitInjectorFailProbabilityCalculator for UnitInjectorRandomCalc {
+    fn calc_failure_probability(&self, vin: &str) -> Result<BigDecimal, UnitInjectorFailCalculationError> {
+        use UnitInjectorFailCalculationError::InvalidParams;
+        use rand::Rng;
+        use bigdecimal::FromPrimitive;
+
+        if vin.is_empty() {
+            return Err(InvalidParams("Vin cannot be empty".into()));
+        }
+
+        let mut r = rand::thread_rng();
+        // max 80%
+        let random_val = r.gen_range(0.1..0.8);
+
+        Ok(BigDecimal::from_f64(random_val).unwrap_or(BigDecimal::default()).with_prec(2))
+    }
+}
