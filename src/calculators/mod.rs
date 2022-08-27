@@ -37,7 +37,7 @@ impl DieselConsumption {
 
         let mut avg_usage = self.avg_usage as f64;
         if let Some(ref wear) = self.wear {
-            let usage_with_ratio = avg_usage * wear.get_ratio();
+            let usage_with_ratio = avg_usage + avg_usage * wear.get_ratio();
 
             // prevent to much scaling, car should not ever have more than 3 time normal consumption.
             let max_usage = 3.0 * avg_usage;
@@ -82,7 +82,7 @@ impl WearRatio {
 
     pub fn get_ratio(&self) -> f64 {
         if self.car_age > 0 {
-            self.car_age as f64 * self.wear_ratio
+            self.car_age as f64 * (self.wear_ratio - 1.0)
         } else {
             1.0
         }
@@ -106,6 +106,6 @@ impl UnitInjectorFailProbabilityCalculator for UnitInjectorRandomCalc {
         // max 80%
         let random_val = r.gen_range(0.1..0.8);
 
-        Ok(BigDecimal::from_f64(random_val).unwrap_or(BigDecimal::default()).with_prec(2))
+        Ok(BigDecimal::from_f64(random_val).unwrap_or_default().with_prec(2))
     }
 }
