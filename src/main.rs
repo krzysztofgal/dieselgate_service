@@ -11,18 +11,22 @@ mod calculation_traits;
 mod calculation_errors;
 mod calculators;
 
-const SERVER_LISTEN_ADDR: &str = "0.0.0.0:80";
+const SERVER_LISTEN_ADDR: &str = "0.0.0.0:3000";
 
 #[tokio::main]
 async fn main() {
+    use calculators::people_car::PasWagonC6Calculator;
+
     tracing_subscriber::fmt::init();
 
+    let calculator = Arc::new(PasWagonC6Calculator::new(1.015));
+
     let app_state_usage_calc = Arc::new(UsageCalcState {
-        diesel_usage_calculator: Arc::new(calculation_traits::NullDieselUsageCalculator),
+        diesel_usage_calculator: calculator.clone(),
     });
 
     let app_state_fail_calc = Arc::new(FailCalcState {
-        injector_fail_calculator: Arc::new(calculation_traits::NullUnitInjectorFailProbabilityCalculator),
+        injector_fail_calculator: calculator,
     });
 
     let app = Router::new()
