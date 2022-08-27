@@ -67,6 +67,7 @@ struct GetDieselUsageForDistanceQuery {
 
 #[derive(Debug, Serialize)]
 struct GetDieselUsageForDistanceResponse {
+    #[serde(rename = "fuelUsage")]
     fuel_usage: BigDecimal
 }
 
