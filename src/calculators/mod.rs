@@ -39,7 +39,7 @@ impl DieselConsumption {
         if let Some(ref wear) = self.wear {
             let usage_with_ratio = avg_usage + avg_usage * wear.get_ratio();
 
-            // prevent to much scaling, car should not ever have more than 3 time normal consumption.
+            // prevent to much scaling, car should not ever have more than 3 times of normal consumption.
             let max_usage = 3.0 * avg_usage;
             avg_usage = f64::min(usage_with_ratio, max_usage);
         }
