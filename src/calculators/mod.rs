@@ -41,11 +41,7 @@ impl DieselConsumption {
 
             // prevent to much scaling, car should not ever have more than 3 time normal consumption.
             let max_usage = 3.0 * avg_usage;
-            if usage_with_ratio > max_usage {
-                avg_usage = max_usage;
-            } else {
-                avg_usage = usage_with_ratio;
-            }
+            avg_usage = f64::min(usage_with_ratio, max_usage);
         }
 
         let consumption = (distance as f64 / 100.0) * avg_usage as f64;
