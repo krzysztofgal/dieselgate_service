@@ -1,7 +1,7 @@
 use bigdecimal::BigDecimal;
 
-use crate::calculation_traits::{DieselUsageCalculator, UnitInjectorFailProbabilityCalculator};
 use crate::calculation_errors::{DieselUsageCalculationError, UnitInjectorFailCalculationError};
+use crate::calculation_traits::{DieselUsageCalculator, UnitInjectorFailProbabilityCalculator};
 
 pub mod people_car;
 
@@ -14,7 +14,7 @@ impl DieselConsumption {
     pub fn new(avg_usage_per_100km: usize) -> Self {
         Self {
             avg_usage: avg_usage_per_100km,
-            wear: None
+            wear: None,
         }
     }
 
@@ -23,12 +23,17 @@ impl DieselConsumption {
         self
     }
 
-    pub fn fuel_usage_at(&self, distance: usize) -> Result<BigDecimal, DieselUsageCalculationError> {
+    pub fn fuel_usage_at(
+        &self,
+        distance: usize,
+    ) -> Result<BigDecimal, DieselUsageCalculationError> {
         use bigdecimal::FromPrimitive;
         use DieselUsageCalculationError::*;
 
         if self.avg_usage < 1 {
-            return Err(InvalidParams("Fuel usage per 100km cannot be less than 1".into()));
+            return Err(InvalidParams(
+                "Fuel usage per 100km cannot be less than 1".into(),
+            ));
         }
 
         if distance < 1 {
@@ -44,9 +49,8 @@ impl DieselConsumption {
             avg_usage = f64::min(usage_with_ratio, max_usage);
         }
 
-        let consumption = (distance as f64 / 100.0) * avg_usage as f64;
-        let consumption = BigDecimal::from_f64(consumption)
-            .ok_or(CalculationFailed)?;
+        let consumption = (distance as f64 / 100.0) * avg_usage;
+        let consumption = BigDecimal::from_f64(consumption).ok_or(CalculationFailed)?;
 
         Ok(consumption.with_prec(2))
     }
@@ -58,7 +62,10 @@ pub struct WearRatio {
 }
 
 impl WearRatio {
-    pub fn new(production_year: usize, wear_ratio: f64) -> Result<Self, DieselUsageCalculationError> {
+    pub fn new(
+        production_year: usize,
+        wear_ratio: f64,
+    ) -> Result<Self, DieselUsageCalculationError> {
         use chrono::{Datelike, Local};
         use DieselUsageCalculationError::{InvalidParams, Unimplemented};
 
@@ -73,7 +80,10 @@ impl WearRatio {
 
         let car_age = current_year - production_year as i32;
 
-        Ok(Self { car_age: car_age as usize, wear_ratio })
+        Ok(Self {
+            car_age: car_age as usize,
+            wear_ratio,
+        })
     }
 
     pub fn get_ratio(&self) -> f64 {
@@ -85,14 +95,16 @@ impl WearRatio {
     }
 }
 
-
 pub struct UnitInjectorRandomCalc;
 
 impl UnitInjectorFailProbabilityCalculator for UnitInjectorRandomCalc {
-    fn calc_failure_probability(&self, vin: &str) -> Result<BigDecimal, UnitInjectorFailCalculationError> {
-        use UnitInjectorFailCalculationError::InvalidParams;
-        use rand::Rng;
+    fn calc_failure_probability(
+        &self,
+        vin: &str,
+    ) -> Result<BigDecimal, UnitInjectorFailCalculationError> {
         use bigdecimal::FromPrimitive;
+        use rand::Rng;
+        use UnitInjectorFailCalculationError::InvalidParams;
 
         if vin.is_empty() {
             return Err(InvalidParams("Vin cannot be empty".into()));
@@ -102,6 +114,8 @@ impl UnitInjectorFailProbabilityCalculator for UnitInjectorRandomCalc {
         // max 80%
         let random_val = r.gen_range(0.1..0.8);
 
-        Ok(BigDecimal::from_f64(random_val).unwrap_or_default().with_prec(2))
+        Ok(BigDecimal::from_f64(random_val)
+            .unwrap_or_default()
+            .with_prec(2))
     }
 }
